@@ -133,7 +133,7 @@ class ItemController extends Controller
             $borrowedBook = new Borrow();
             $borrowedBook->user_id = Auth::check() ? Auth::user()->id : null;
             $borrowedBook->book_id = $book['id'];
-            $borrowedBook->due_date = $book['due_date'];
+            $borrowedBook->date = $book['due_date'];
             $borrowedBook->quantity = $book['quantity'];
             $borrowedBook->save();
     
@@ -145,7 +145,7 @@ class ItemController extends Controller
     
             $bookToStock = Stock::where('book_id', $book['id'])->first();
             if ($bookToStock) {
-                $bookToStock->stock -= $book['quantity']; // Decrement the stock column
+                $bookToStock->stocks -= $book['quantity']; // Decrement the stock column
                 $bookToStock->save();
             }
         }
@@ -198,8 +198,8 @@ class ItemController extends Controller
                 ->join('borrows', 'books.id', '=', 'borrows.book_id')
                 ->whereIn('books.id', $borrowedBookIds)
                 ->where('borrows.user_id', $user)
-                ->whereNotNull('due_date')
-                ->get(['books.id', 'title', 'imgpath', 'due_date', 'penalty']);
+                ->whereNotNull('date')
+                ->get(['books.id', 'title', 'imgpath', 'date', 'penalty']);
 
 
             foreach ($borrowedBooks as $borrow) {

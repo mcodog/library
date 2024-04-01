@@ -22,7 +22,7 @@ class StockSeeder extends Seeder
 
        
         for ($i = 0; $i < 20; $i++) {
-            DB::table('authors')->insert([
+            DB::table('stocks')->insert([
                 'book_id' => $faker->randomElement($bookIds),
                 'stocks' => $faker->numberBetween(0, 100),
                 'created_at' => $faker->dateTime(),
