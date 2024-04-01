@@ -7,6 +7,7 @@ use App\Models\Stock;
 use DB;
 use Illuminate\Http\Request;
 use View;
+use Redirect;
 
 class StockController extends Controller
 {
@@ -26,7 +27,6 @@ class StockController extends Controller
     public function create()
     {
         $books = Book::with('stock')
-            ->whereDoesntHave('stock')
             ->get();
 // dd($books);
         return view('stock.create', compact('books'));
@@ -40,9 +40,9 @@ class StockController extends Controller
     {
         $stock = new Stock;
         $stock->book_id = $request->book_id;
-        $stock->stock = $request->stock;
+        $stock->stocks = $request->stock;
         $stock->save();
-        return redirect()->route('stocks.index');
+        return Redirect::to('stocktable');
     }
 
     /**
@@ -67,9 +67,10 @@ class StockController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        
         $stock = Stock::find($id);
         $stock->book_id = $request->input('book_id');
-        $stock->stock = $request->stock;
+        $stock->stocks = $request->stock;
         $stock->save();
         return redirect()->route('stock.table');
     }
@@ -80,6 +81,6 @@ class StockController extends Controller
     public function destroy(string $id)
     {
         Stock::destroy($id);
-        return back();
+        return Redirect::to('stocktable');
     }
 }

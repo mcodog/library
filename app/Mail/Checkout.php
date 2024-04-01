@@ -11,16 +11,16 @@ class Checkout extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $checkoutItems; // Add a public property to store the checkout items
+    public $checkout; // Add a public property to store the checkout items
 
     /**
      * Create a new message instance.
      *
      * @param array $checkoutItems The array containing checkout items
      */
-    public function __construct(array $checkoutItems)
+    public function __construct($checkout)
     {
-        $this->checkoutItems = $checkoutItems;
+        $this->checkout = $checkout;
     }
 
     /**
@@ -32,6 +32,6 @@ class Checkout extends Mailable
     {
         return $this->subject('Checkout')
                     ->view('admin.checkout_email')
-                    ->with('checkoutItems', $this->checkoutItems);
+                    ->with('checkoutItems', $this->checkout);
     }
 }

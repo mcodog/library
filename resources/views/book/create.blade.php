@@ -7,6 +7,16 @@
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-8">
+    @if($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
     <form action="{{url('/book')}}"  method="POST" enctype="multipart/form-data">
         @csrf
         <div class="form-group row">
@@ -39,7 +49,7 @@
 
       <div class="form-group row">
         <label class="form-check-label" for="file">Image</label>
-        <input type="file" class="form-control" id="file" name="imgpath" accept='image/*'>
+        <input type="file" class="form-control" id="file" name="imgpath" accept='image/*' multiple>
 
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>

@@ -44,7 +44,7 @@
                     </form>
                 </div>
             </li>
-            @if (Auth::check() && Auth::user()->role === '1')
+            @if (Auth::user()->role == '1')
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="crudDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -63,6 +63,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="nestedDropdown">
                             <a class="dropdown-item" href="{{ route('books.table') }}">Book</a>
+                            <a class="dropdown-item" href="{{ route('genre.table') }}">Genre</a>
                             <a class="dropdown-item" href="{{ route('stock.table') }}">Stock</a>
                             <a class="dropdown-item" href="{{ route('author.table') }}">Author</a>
                         </div>

@@ -7,7 +7,7 @@
 <div class="container">
   <div class="container">
     <div class="row justify-content-center">
-    {{Form::model($author, ['route' => ['user.update', $author ->id], 'method'=> 'PUT'])}}
+    {{Form::model($author, ['route' => ['author.update', $author ->id], 'method'=> 'PUT'])}}
     <div class="form-group row">
       <label for="name">Name</label>
       {!! Form::text('name', null, ['class' => 'form-control']) !!}

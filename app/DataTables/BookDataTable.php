@@ -22,17 +22,17 @@ class BookDataTable extends DataTable
      */
     public function dataTable($query)
     {
-        return datatables()
-            ->collection($query)
+        return datatables($query)
             ->addColumn('action', function ($row) {
                 $editBtn = '<a href="' . route('book.edit', $row->id) . '" class="btn btn-primary">Edit</a>';
-                $deleteBtn = '<form action="' . route('book.destroy', $row->id) . '" method="POST" class="d-inline">
-                                ' . method_field('DELETE') . '
-                                ' . csrf_field() . '
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                              </form>';
+                $deleteBtn = '<a href="book/'. $row->id .'/delete">Delete</href>';
                 return $editBtn . ' ' . $deleteBtn;
-            });
+            })
+            ->addColumn('image', function ($book) {
+                return "<img src='". url($book->getImage()) ."' alt='Manufacturer' style='width:50px;'>";
+            })
+            ->setRowId('id')
+            ->rawColumns(['action', 'image']);
     }
     
 
@@ -41,19 +41,7 @@ class BookDataTable extends DataTable
      */
     public function query()
     {
-        $books = Book::with(['author', 'genre'])->get();
-        DebugBar::info($books);
-        $books = $books->map(function ($book) {
-            $book['name'] = $book->author->name;
-            return $book;
-        });
-
-        $books = $books->map(function ($book) {
-            $book['genre_name'] = $book->genre->genre_name;
-            return $book;
-        });
-
-        return $books;
+        
     }
     
 
@@ -90,6 +78,7 @@ class BookDataTable extends DataTable
             Column::make('name')->title('Author Name'),
             Column::make('nums')->title('Times Borrowed'),
             Column::make('genre_name')->title('Genre'),
+            Column::computed('image'),
             Column::computed('action')
             ->exportable(false)
             ->printable(false)

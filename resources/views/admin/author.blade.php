@@ -1,5 +1,5 @@
 @extends('layout.master')
-@if(Auth::check() && Auth::user()->role === '1')
+@if(Auth::user()->role == '1')
     @section('content')
     <div class="row">
         @include('layout.flash-messages')

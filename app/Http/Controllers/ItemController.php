@@ -149,7 +149,7 @@ class ItemController extends Controller
                 $bookToStock->save();
             }
         }
-        Mail::to('juromefernando@gmail.com')->send(new Checkout($checkout));
+        Mail::to(Auth::user()->email)->send(new Checkout($checkout));
         session()->forget('checkout');
     
         return redirect()->route('getItems')->with('success', 'Books borrowed successfully!');

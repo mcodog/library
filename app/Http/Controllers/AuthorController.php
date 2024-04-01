@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Author;
 use App\DataTables\AuthorDataTable;
+use Illuminate\Support\Facades\Validator;
 use View;
+use Redirect;
 
 class AuthorController extends Controller
 {
@@ -31,12 +33,33 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|min:5|max:20',
+            'gender' => 'required',
+            'age' => 'required|numeric',
+
+        ], [
+            'name.required' => 'The name field is required.',
+            'gender.required' => 'The gender field is required.',
+            'age.required' => 'The age field is required.',
+            'age.numeric' => 'The age field should be numeric.',
+            'name.min' => 'The name must be at least 5 characters.',
+            'name.max' => 'The name may not be greater than 20 characters.',
+
+        ]);
+
+        if ($validator->fails()) {
+            // dd($validator->messages());
+            return redirect()->back()->withErrors($validator->messages())->withInput();
+        }
+
         $author = new Author;
+        
         $author->name = $request->name;
         $author->gender = $request->gender;
         $author->age = $request->age;
         $author->save();
-        return redirect()->route('author.tables');
+        return redirect()->route('author.table');
     }
 
     /**
@@ -66,7 +89,7 @@ class AuthorController extends Controller
         $author->gender = $request->gender;
         $author->age = $request->age;
         $author->save();
-        return redirect()->route('author.index');
+        return Redirect::to('authortable');
     }
 
     /**
@@ -75,7 +98,7 @@ class AuthorController extends Controller
     public function destroy(string $id)
     {
         Author::destroy($id);
-        return back();
+        return Redirect::to('authortable');
     }
 
     public function authortable(AuthorDataTable $dataTable)

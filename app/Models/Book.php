@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class Book extends Model
 {
@@ -16,6 +18,18 @@ class Book extends Model
     public function borrows()
     {
         return $this->hasMany(Borrow::class);
+    }
+
+    public function getImage(){
+        if($this->imgpath){
+            if (Str::startsWith($this->imgpath, "https://via.placeholder.com/")) {
+                return $this->imgpath;
+            } else {
+                return url('storage/'. $this->imgpath);
+            }
+            
+        }
+        return URL::asset('storage/book/default-book.png');
     }
 
     public static function boot()

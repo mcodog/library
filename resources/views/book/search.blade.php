@@ -9,7 +9,7 @@
     <ul>
         @foreach ($books as $book)
         
-        <li><img src="{{url($book->imgpath)}}" alt="" width="150px" height="150px"> - -{{ $book->title }} by {{ $book->author_name }} ({{ $book->genre_name }}) - Released on {{ $book->date_released }}</li>
+        <li><img src="{{url($book->imgpath)}}" alt="" width="150px" height="150px"> - -{{ $book->title }} by {{ $book->author_name }} ({{ $book->genre_name }}) - Released on {{ $book->date_released }}<a class="btn btn-primary" href="#">See Full Details</a></li>
     @endforeach
     </ul>
 @endsection

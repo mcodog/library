@@ -12,6 +12,7 @@ use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
+
 class AuthorDataTable extends DataTable
 {
     /**
@@ -23,14 +24,15 @@ class AuthorDataTable extends DataTable
     {
         return dataTables($query)
         ->addColumn('action', function ($row) {
-                $editBtn = '<a href="' . route('book.edit', $row->id) . '" class="btn btn-primary">Edit</a>';
-                $deleteBtn = '<form action="' . route('book.destroy', $row->id) . '" method="POST" class="d-inline">
-                                ' . method_field('DELETE') . '
-                                ' . csrf_field() . '
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                              </form>';
+                $editBtn = '<a href="author/'. $row->id .'/edit" class="btn btn-primary">Edit</a>';
+                $deleteBtn = '<a href="author/'. $row->id .'/delete">Delete</href>';
                 return $editBtn . ' ' . $deleteBtn;
-            });
+            })
+            ->addColumn('image', function ($author) {
+                return "<img src='". url($author->getImage()) ."' alt='Manufacturer' style='width:50px;'>";
+            })
+            ->setRowId('id')
+            ->rawColumns(['action', 'image']);
     }
 
     /**
@@ -75,6 +77,11 @@ class AuthorDataTable extends DataTable
             Column::make('name'),
             Column::make('gender'),
             Column::make('age'),
+            Column::computed('image')
+                  ->exportable(false)
+                  ->printable(false)
+                  ->width(60)
+                  ->addClass('text-center'),
             Column::computed('action')
             ->exportable(false)
             ->printable(false)

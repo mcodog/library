@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\BookDataTable;
-use App\DataTables\StockDataTable;
+use App\DataTables\BooksDataTable;
+use App\DataTables\StocksDataTable;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\Genre;
@@ -12,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
+use Auth;
+use Redirect;
 
 class BookController extends Controller
 {
@@ -22,6 +25,7 @@ class BookController extends Controller
      */
     public function index()
     {
+        // dump(Auth::user()->role);
         $books = DB::table('authors')
             ->join('books', 'authors.id', '=', 'books.author_id')
             ->join('genres', 'books.genre_id', '=', 'genres.id')
@@ -56,23 +60,28 @@ class BookController extends Controller
             'genre_id' => 'required',
             'date_released' => 'required',
             'imgpath' => 'required|image|mimes:jpeg,jpg,png,gif',
+        ], [
+            'title.required' => 'The title field is required.',
+            'title.min' => 'The title must be at least :min characters.',
+            'title.max' => 'The title may not be greater than :max characters.',
+            'author_id.required' => 'Please select an author.',
+            'genre_id.required' => 'Please select a genre.',
+            'date_released.required' => 'Please provide the release date.',
+            'imgpath.required' => 'Please upload an image.',
+            'imgpath.image' => 'The uploaded file must be an image.',
+            'imgpath.mimes' => 'The image must be a file of type: :values.',
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            // dd($validator->messages());
+            return redirect()->back()->withErrors($validator->messages())->withInput();
         }
 
         $book = new Book;
 
-        if ($request->file()) {
-            $fileName = time() . '_' . $request->file('imgpath')->getClientOriginalName();
-
-            $path = Storage::putFileAs(
-                'public/images',
-                $request->file('imgpath'),
-                $fileName
-            );
-            $book->imgpath = '/storage/images/' . $fileName;
+        if(request()->has('imgpath')){
+            // $imagePath = request()->file('image')->store('category', 'public');
+            $book->imgpath = request()->file('imgpath')->store('book', 'public');;
         }
 
         $book->title = $request->title;
@@ -113,7 +122,7 @@ class BookController extends Controller
         $authors = Author::where('id', '<>', $book->author_id)->get(['name', 'id']);
         $genres = Genre::where('id', '<>', $book->genre_id)->get(['genre_name', 'id']);
 
-        return View::make('book.edit', compact('book', 'authors', 'genres'));
+        return View::make('book.edit', compact('book', 'authors', 'genres', 'id'));
     }
 
     /**
@@ -125,38 +134,16 @@ class BookController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|min:5|max:20',
-            'author_id' => 'required',
-            'genre_id' => 'required',
-            'date_released' => 'required',
-            'imgpath' => 'image|mimes:jpeg,jpg,png,gif',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
         $book = Book::find($id);
-
-        if ($request->file()) {
-            $fileName = time() . '_' . $request->file('imgpath')->getClientOriginalName();
-
-            $path = Storage::putFileAs(
-                'public/images',
-                $request->file('imgpath'),
-                $fileName
-            );
-            $book->imgpath = '/storage/images/' . $fileName;
-        }
 
         $book->title = $request->title;
         $book->author_id = $request->author_id;
         $book->genre_id = $request->genre_id;
         $book->date_released = $request->date_released;
+        // dump($book);
         $book->save();
 
-        return redirect()->route('book.index');
+        return Redirect::to('booktable');
     }
 
     /**
@@ -168,7 +155,7 @@ class BookController extends Controller
     public function destroy($id)
     {
         Book::destroy($id);
-        return back();
+        return Redirect::to('booktable');
     }
 
     public function search(Request $request)
@@ -187,12 +174,12 @@ class BookController extends Controller
         return view('book.search', ['books' => $books, 'query' => $query]);
     }
 
-    public function booktable(BookDataTable $dataTable)
+    public function booktable(BooksDataTable $dataTable)
     {   
         return $dataTable->render("admin.book");
     }
 
-    public function stocktable(StockDataTable $dataTable)
+    public function stocktable(StocksDataTable $dataTable)
     {
         return $dataTable->render("admin.stock");
     }

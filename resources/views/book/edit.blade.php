@@ -7,8 +7,7 @@
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-8">
-    <form action="{{route('book.update', $book->id)}}"  method="POST" enctype="multipart/form-data">
-        @method('PUT')
+    <form action="{{ url('book/'. $id .'/update') }}"  method="POST" enctype="multipart/form-data">
         @csrf
         <div class="form-group row">
           <label for="title">Book Title</label>

@@ -66,7 +66,14 @@
                                     </form>
                                 </div>
                             </li>
+                            @if(Auth::user()->role == 1)
+                         <li>Book CRUD</li>
+                         <li>Author CRUD</li>
+                         <li>Genre CRUD</li>
+                         <li>Stock CRUD</li>
+                         @endif
                         @endguest
+                         
                     </ul>
                 </div>
             </div>

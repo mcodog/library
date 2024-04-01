@@ -4,7 +4,8 @@
 @endsection
 
 @section('content')
-@if (Auth::user() && Auth::user()->role === '1')
+
+@if (Auth::user()->role == '1')
 <div class="container">
   <p></p>
   <a href="{{route('book.create')}}" class="btn btn-primary btn-lg " role="button" aria-disabled="true" style="float: right;">Add Book</a>
